@@ -1,0 +1,54 @@
+package com.ikno.iknoplus.control;
+
+import java.util.Random;
+
+import com.ikno.iknoplus.model.api.BatchClassCrud;
+import com.ikno.iknoplus.model.api.BatchInstanceCrud;
+import com.ikno.iknoplus.model.entity.BatchClass;
+import com.ikno.iknoplus.model.entity.BatchInstance;
+import com.ikno.iknoplus.restApi.integrationDtos.SimpleTesterInput;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class DatabaseIntegrationChecking {
+
+    @Autowired
+    private BatchInstanceCrud biCrud;
+
+    @Autowired
+    private BatchClassCrud bcCrud;
+
+    // Required when deleting
+    // All jpa transactions will be persisted at the end of execution of this method
+    @Transactional
+    public void doSomeLogic(SimpleTesterInput sto) {
+
+        // Creating the new batch Instance
+        BatchInstance bi = new BatchInstance("SomeName");
+        bi.setName(sto.getHi());
+        bi.setPages(new Random().nextInt(55));
+
+        // Saving the batchClass first
+        BatchClass bc = new BatchClass("fdasfds");
+        bc.setBcName("BcName");
+        bcCrud.save(bc);
+
+        bi.setBatchClass(bc);
+
+        // Inserting and updating
+        biCrud.save(bi);
+
+        // Finding or Retrieving
+        System.out.println("Found: " + biCrud.findByPages(12).size());
+
+        // Deleting
+        System.out.println("Deleted: " + biCrud.deleteByName("gdsgf"));
+
+        System.out.println(bi);
+
+    }
+
+}
